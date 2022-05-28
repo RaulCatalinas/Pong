@@ -560,6 +560,7 @@ class Creditos:
             50,
             self.ventanaCreditos,
         )
+        
         # Autor
         self.etiquetaAutor = Etiqueta(
             "Autor: Raul Catalinas Esteban",
