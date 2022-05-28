@@ -480,7 +480,7 @@ class Jugar:
     def __init__(self):
         """
         Inicialización de pygame.
-        Carga de los sonidos y de los sprites.
+        Carga de los sprites.
         Generación de la variable que controla el bucle principal del juego.
         """
         pg.init()
