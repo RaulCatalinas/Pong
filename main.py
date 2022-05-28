@@ -126,9 +126,7 @@ class Botones:
             self.boton.pack(pady=self.y)
 
             self.cambiarColor.FuncionCambiarColor(
-                self.boton,
-                self.colorRatonDentro,
-                self.colorRatonFuera
+                self.boton, self.colorRatonDentro, self.colorRatonFuera
             )
 
     class BotonPosicionRelativa:
@@ -187,24 +185,13 @@ class Botones:
             self.boton.place(x=x, y=y)
 
             self.cambiarColor.FuncionCambiarColor(
-                self.boton,
-                self.colorRatonDentro,
-                self.colorRatonFuera
+                self.boton, self.colorRatonDentro, self.colorRatonFuera
             )
 
 
 # Clase que crea los labels y los coloca en pantalla
 class Etiqueta:
-    def __init__(
-            self,
-            texto,
-            y,
-            ancho,
-            colorFondo,
-            fuente,
-            tamañoFuente,
-            ventana
-    ):
+    def __init__(self, texto, y, ancho, colorFondo, fuente, tamañoFuente, ventana):
         """
         Crea una etiqueta con los parámetros dados y luego la coloca en la ventana.
         @param texto - El texto que se mostrará en la etiqueta.
@@ -241,15 +228,19 @@ class Main:
     Clase principal del programa.
     """
 
-    def FuncionMain(self):
+    def __init__(self):
+        """
+        Crear instancias de las clases que se utilizarán en el programa.
+        """
         # Instancias de las clases
+        self.jugar = Jugar()
         self.salir = Salir()
         self.cambiarColor = CambiarColor()
         self.controles = Controles()
         self.boton = Botones()
-        self.jugar = Jugar()
         self.creditos = Creditos()
 
+    def FuncionMain(self):
         # Creación de la ventana
         self.ventana = Tk()
         self.ventana.title("Pong")
@@ -373,8 +364,12 @@ class Controles:
         # Centrar ventana
         self.ancho_ventana = 1280
         self.alto_ventana = 720
-        self.x_ventana = self.ventanaControles.winfo_screenwidth() // 2 - self.ancho_ventana // 2
-        self.y_ventana = self.ventanaControles.winfo_screenheight() // 2 - self.alto_ventana // 2
+        self.x_ventana = (
+                self.ventanaControles.winfo_screenwidth() // 2 - self.ancho_ventana // 2
+        )
+        self.y_ventana = (
+                self.ventanaControles.winfo_screenheight() // 2 - self.alto_ventana // 2
+        )
         self.posicion = (
                 str(self.ancho_ventana)
                 + "x"
@@ -502,6 +497,7 @@ class Jugar:
         Inicialización de pygame.
         Carga de los sprites.
         Generación de la variable que controla el bucle principal del juego.
+        Crear instancias de las clases.
         """
         pg.init()
         self.icono = pg.image.load("./Images/icono.ico")
@@ -510,17 +506,29 @@ class Jugar:
     def FuncionJugar(self):
         # Instancias de las clases
         self.salir = Salir()
-        self.main = Main()
-        self.boton = Botones()
 
-        # Creación de la ventana
+        # Creación de la ventana + icono + título + pintar el fondo de negro
         self.ventanaJuego = pg.display.set_mode((1280, 720))
+        pg.display.set_icon(self.icono)
         pg.display.set_caption("Pong")
         self.ventanaJuego.fill(negro)
-        pg.display.set_icon(self.icono)
+
+        # Dibujar la línea que divide los campos
+        pg.draw.line(
+            # Ventana donde se dibujara la linea
+            self.ventanaJuego,
+            # Color de la linea
+            blanco,
+            # Posición inicial de la línea
+            (1280 // 2, 0),
+            # Posición final de la línea
+            (1280 // 2, 720),
+            # Ancho de la línea
+            5,
+        )
 
         # Centrar ventana
-        os.environ['SDL_VIDEO_CENTRED'] = '1'
+        os.environ["SDL_VIDEO_CENTRED"] = "1"
 
         # Bucle principal del juego
         while self.jugar:
@@ -558,8 +566,12 @@ class Creditos:
         # Centrar ventana
         self.ancho_ventana = 1280
         self.alto_ventana = 720
-        self.x_ventana = self.ventanaCreditos.winfo_screenwidth() // 2 - self.ancho_ventana // 2
-        self.y_ventana = self.ventanaCreditos.winfo_screenheight() // 2 - self.alto_ventana // 2
+        self.x_ventana = (
+                self.ventanaCreditos.winfo_screenwidth() // 2 - self.ancho_ventana // 2
+        )
+        self.y_ventana = (
+                self.ventanaCreditos.winfo_screenheight() // 2 - self.alto_ventana // 2
+        )
         self.posicion = (
                 str(self.ancho_ventana)
                 + "x"
@@ -645,7 +657,135 @@ class Creditos:
         self.ventanaCreditos.mainloop()
 
 
-# Crear instancia de la clase principal
+# Clase que controla las raquetas.
+class Raquetas:
+    """
+    Clase que controla las raquetas.
+    """
+
+    def __init__(
+            self,
+            posicionX,
+            posicionY,
+            ancho,
+            alto,
+            color,
+            estado,
+            ventana,
+    ):
+        """
+        Inicialización de las raquetas.
+        """
+        self.posicionX = posicionX
+        self.posicionY = posicionY
+        self.ancho = ancho
+        self.alto = alto
+        self.color = color
+        self.estado = "stopped"
+        self.ventana = ventana
+        self.DibujarRaqueta()
+
+    def DibujarRaqueta(self):
+        """
+        Dibuja la raqueta.
+        """
+        self.raqueta = pg.draw.rect(
+            self.ventana,
+            self.color,
+            (self.posicionX, self.posicionY, self.ancho, self.alto),
+        )
+
+    def MoverRaqueta(self, direccion):
+        """
+        Mueve la raqueta.
+        """
+        if self.estado == "up":
+            self.posicionY -= 10
+        elif self.estado == "down":
+            self.posicionY += 10
+
+    def EvitarQueSeSalgaDeLaPantalla(self):
+        """
+        Evita que se salga de la pantalla.
+        """
+        if self.posicionY <= 0:
+            self.posicionY = 0
+        elif self.posicionY + self.alto >= 720:
+            self.posicionY = 720 - self.alto
+
+    def ReiniciarPosicion(self):
+        """
+        Reinicia la posición de la raqueta.
+        """
+        self.posicionY = 720 // 2 - self.alto // 2
+        self.estado = "stopped"
+        self.DibujarRaqueta()
+
+
+# Clase que controla la pelota.
+class Pelota:
+    """
+    Clase que controla la pelota.
+    """
+
+    def __init__(
+            self,
+            posicionX,
+            posicionY,
+            radio,
+            color,
+            ventana,
+    ):
+        """
+        Inicialización de la pelota.
+        """
+        self.posicionX = posicionX
+        self.posicionY = posicionY
+        self.color = color
+        self.radio = radio
+        self.ventana = ventana
+        self.DibujarPelota()
+
+    def DibujarPelota(self):
+        """
+        Dibuja la pelota.
+        """
+        self.pelota = pg.draw.circle(
+            self.ventana,
+            self.color,
+            (self.posicionX, self.posicionY),
+            self.radio,
+        )
+
+
+# Clase que controla la puntuación del juego.
+class Puntuacion:
+    """
+    Clase que controla la puntuación del juego.
+    """
+
+    def __init__(self):
+        pass
+
+    def FuncionPuntuacion(self):
+        pass
+
+    # Crear instancia de la clase principal
+
+
+# Clase que controla las colisiones del juego.
+class Colisiones:
+    """
+    Clase que controla las colisiones del juego.
+    """
+
+    def __init__(self):
+        pass
+
+    def FuncionColisiones(self):
+        pass
+
+
 menu = Main()
 
 # Llamar a la función principal
