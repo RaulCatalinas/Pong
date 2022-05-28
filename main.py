@@ -6,7 +6,7 @@ from tkinter import messagebox
 import pygame as pg
 from pygame import QUIT
 
-# Colores
+# Colores en hexadecimal
 azulOscuro = "#000033"
 azul = "#00FFFF"
 rojoOscuro = "#330000"
