@@ -19,6 +19,8 @@ amarillo = "#FFFF00"
 amarilloOscuro = "#333300"
 verdeOscuro = "#003300"
 verde = "#00FF00"
+naranjaOscuro = "#331900"
+naranja = "#FF8000"
 
 
 # Clase que controla el cierre del juego
@@ -285,7 +287,7 @@ class Main:
         # Crear botones
         self.botonJugar = self.boton.BotonPosicionAbsoluta(
             "Jugar",
-            15,
+            25,
             30,
             verdeOscuro,
             lambda: [
@@ -301,7 +303,7 @@ class Main:
 
         self.botonControles = self.boton.BotonPosicionAbsoluta(
             "Controles",
-            20,
+            30,
             30,
             azulOscuro,
             lambda: [
@@ -317,7 +319,7 @@ class Main:
 
         self.botonCreditos = self.boton.BotonPosicionAbsoluta(
             "Créditos",
-            25,
+            35,
             30,
             amarilloOscuro,
             lambda: [
@@ -359,6 +361,7 @@ class Controles:
         self.salir = Salir()
         self.main = Main()
         self.boton = Botones()
+        self.creditos = Creditos()
 
         # Creación de la ventana
         self.ventanaControles = Tk()
@@ -437,7 +440,7 @@ class Controles:
         self.botonVolverAlMenu = self.boton.BotonPosicionRelativa(
             "Volver al menú",
             20,
-            200,
+            100,
             13,
             amarilloOscuro,
             lambda: [
@@ -451,10 +454,27 @@ class Controles:
             amarilloOscuro,
         )
 
+        self.botonCreditos = self.boton.BotonPosicionRelativa(
+            "Créditos",
+            20,
+            218,
+            13,
+            naranjaOscuro,
+            lambda: [
+                self.ventanaControles.destroy(),
+                self.creditos.FuncionCreditos(),
+            ],
+            "Helvetica",
+            30,
+            self.ventanaControles,
+            naranja,
+            naranjaOscuro,
+        )
+
         self.botonSalir = self.boton.BotonPosicionRelativa(
             "Salir",
             20,
-            300,
+            330,
             13,
             rojoOscuro,
             lambda: [
@@ -526,6 +546,7 @@ class Creditos:
         self.salir = Salir()
         self.main = Main()
         self.boton = Botones()
+        self.controles = Controles()
 
         # Creación de la ventana
         self.ventanaCreditos = Tk()
@@ -560,7 +581,7 @@ class Creditos:
             50,
             self.ventanaCreditos,
         )
-        
+
         # Autor
         self.etiquetaAutor = Etiqueta(
             "Autor: Raul Catalinas Esteban",
@@ -575,7 +596,7 @@ class Creditos:
         # Botones
         self.botonVolverAlMenu = self.boton.BotonPosicionAbsoluta(
             "Volver al menú",
-            20,
+            35,
             30,
             amarilloOscuro,
             lambda: [
@@ -589,9 +610,25 @@ class Creditos:
             amarilloOscuro,
         )
 
+        self.botonControles = self.boton.BotonPosicionAbsoluta(
+            "Controles",
+            40,
+            30,
+            azulOscuro,
+            lambda: [
+                self.ventanaCreditos.destroy(),
+                self.controles.FuncionControles(),
+            ],
+            "Helvetica",
+            30,
+            self.ventanaCreditos,
+            azul,
+            azulOscuro,
+        )
+
         self.botonSalir = self.boton.BotonPosicionAbsoluta(
             "Salir",
-            25,
+            45,
             30,
             rojoOscuro,
             lambda: [
