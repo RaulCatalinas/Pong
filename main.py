@@ -193,7 +193,16 @@ class Botones:
 
 # Clase que crea los labels y los coloca en pantalla
 class Etiqueta:
-    def __init__(self, texto, y, ancho, colorFondo, fuente, tamañoFuente, ventana):
+    def __init__(
+            self,
+            texto,
+            y,
+            ancho,
+            colorFondo,
+            fuente,
+            tamañoFuente,
+            ventana
+    ):
         """
         Crea una etiqueta con los parámetros dados y luego la coloca en la ventana.
         @param texto - El texto que se mostrará en la etiqueta.
