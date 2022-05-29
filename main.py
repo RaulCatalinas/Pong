@@ -1,8 +1,8 @@
 import os
 import sys
+from random import randint
 from tkinter import Button, Label, Tk
 from tkinter import messagebox
-from random import randint
 
 import pygame as pg
 from pygame import QUIT
@@ -75,17 +75,17 @@ class Botones:
 
     class BotonPosicionAbsoluta:
         def __init__(
-            self,
-            texto,
-            y,
-            ancho,
-            colorFondo,
-            funcion,
-            fuente,
-            tamañoFuente,
-            ventana,
-            colorRatonDentro,
-            colorRatonFuera,
+                self,
+                texto,
+                y,
+                ancho,
+                colorFondo,
+                funcion,
+                fuente,
+                tamañoFuente,
+                ventana,
+                colorRatonDentro,
+                colorRatonFuera,
         ):
             """
             Crea un botón con los parámetros dados y luego llama a la función "CambiarColor" para cambiar el color del botón
@@ -132,18 +132,18 @@ class Botones:
 
     class BotonPosicionRelativa:
         def __init__(
-            self,
-            texto,
-            x,
-            y,
-            ancho,
-            colorFondo,
-            funcion,
-            fuente,
-            tamañoFuente,
-            ventana,
-            colorRatonDentro,
-            colorRatonFuera,
+                self,
+                texto,
+                x,
+                y,
+                ancho,
+                colorFondo,
+                funcion,
+                fuente,
+                tamañoFuente,
+                ventana,
+                colorRatonDentro,
+                colorRatonFuera,
         ):
             """
             Crea un botón con los parámetros dados y luego llama a la función "CambiarColor" para cambiar el color del botón
@@ -255,13 +255,13 @@ class Main:
         self.x_ventana = self.ventana.winfo_screenwidth() // 2 - self.ancho_ventana // 2
         self.y_ventana = self.ventana.winfo_screenheight() // 2 - self.alto_ventana // 2
         self.posicion = (
-            str(self.ancho_ventana)
-            + "x"
-            + str(self.alto_ventana)
-            + "+"
-            + str(self.x_ventana)
-            + "+"
-            + str(self.y_ventana)
+                str(self.ancho_ventana)
+                + "x"
+                + str(self.alto_ventana)
+                + "+"
+                + str(self.x_ventana)
+                + "+"
+                + str(self.y_ventana)
         )
         self.ventana.geometry(self.posicion)
 
@@ -366,19 +366,19 @@ class Controles:
         self.ancho_ventana = 1280
         self.alto_ventana = 720
         self.x_ventana = (
-            self.ventanaControles.winfo_screenwidth() // 2 - self.ancho_ventana // 2
+                self.ventanaControles.winfo_screenwidth() // 2 - self.ancho_ventana // 2
         )
         self.y_ventana = (
-            self.ventanaControles.winfo_screenheight() // 2 - self.alto_ventana // 2
+                self.ventanaControles.winfo_screenheight() // 2 - self.alto_ventana // 2
         )
         self.posicion = (
-            str(self.ancho_ventana)
-            + "x"
-            + str(self.alto_ventana)
-            + "+"
-            + str(self.x_ventana)
-            + "+"
-            + str(self.y_ventana)
+                str(self.ancho_ventana)
+                + "x"
+                + str(self.alto_ventana)
+                + "+"
+                + str(self.x_ventana)
+                + "+"
+                + str(self.y_ventana)
         )
         self.ventanaControles.geometry(self.posicion)
 
@@ -520,6 +520,68 @@ class Jugar:
         pg.display.set_caption("Pong")
         self.ventanaJuego.fill(negro)
 
+        Jugar.DibujarMedioCampo(self)
+
+        # Centrar ventana
+        os.environ["SDL_VIDEO_CENTRED"] = "1"
+
+        # Bucle principal del juego
+        while self.jugar:
+            for event in pg.event.get():
+                # Comprobar si se ha pulsado el botón de salir
+                if event.type == QUIT:
+                    self.salir.FuncionSalirPygame(self.ventanaJuego)
+                # Comprobar si se ha pulsado una tecla
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_w:
+                        self.jugador1.estado = "arriba"
+                    if event.key == pg.K_s:
+                        self.jugador1.estado = 'abajo'
+                    if event.key == pg.K_UP:
+                        self.jugador2.estado = 'arriba'
+                    if event.key == pg.K_DOWN:
+                        self.jugador2.estado = 'abajo'
+                # Comprobar si se ha soltado una tecla
+                if event.type == pg.KEYUP:
+                    if event.key == pg.K_w:
+                        self.jugador1.estado = 'parado'
+                    if event.key == pg.K_s:
+                        self.jugador1.estado = 'parado'
+                    if event.key == pg.K_UP:
+                        self.jugador2.estado = 'parado'
+                    if event.key == pg.K_DOWN:
+                        self.jugador2.estado = 'parado'
+            # Borrar rastro de la pelota
+            self.ventanaJuego.fill(negro)
+
+            # Dibujar Medio Campo
+            Jugar.DibujarMedioCampo(self)
+
+            # Llamar a las funciones que dibujan los sprites
+            self.pelota.DibujarPelota()
+            self.jugador1.DibujarRaqueta()
+            self.jugador2.DibujarRaqueta()
+
+            # Llamar a la funcion que mueve la pelota + la funcion que mueve las raquetas
+            self.pelota.MoverPelota()
+            self.jugador1.MoverRaqueta()
+            self.jugador2.MoverRaqueta()
+
+            # Llamar a la funcion que comprueba si la pelota ha chocado con alguna raqueta
+
+            # self.pelota.ComprobarChoque()
+
+            # Llamar a la funcion que evita que la raqueta se salga de la pantalla
+            self.jugador1.EvitarQueSeSalgaDeLaPantalla()
+            self.jugador2.EvitarQueSeSalgaDeLaPantalla()
+
+            # Limitar FPS
+            pg.time.Clock().tick(60)
+
+            # Actualizar ventana
+            pg.display.update()
+
+    def DibujarMedioCampo(self):
         # Dibujar la línea que divide los campos
         pg.draw.line(
             # Ventana donde se dibujara la linea
@@ -533,26 +595,6 @@ class Jugar:
             # Ancho de la línea
             5,
         )
-
-        # Centrar ventana
-        os.environ["SDL_VIDEO_CENTRED"] = "1"
-
-        # Bucle principal del juego
-        while self.jugar:
-            for event in pg.event.get():
-                if event.type == QUIT:
-                    self.salir.FuncionSalirPygame(self.ventanaJuego)
-
-            # Llamar a las funciones que dibujan los sprites
-            self.pelota.DibujarPelota()
-            self.jugador1.DibujarRaqueta()
-            self.jugador2.DibujarRaqueta()
-
-            # Limitar FPS
-            pg.time.Clock().tick(60)
-
-            # Actualizar ventana
-            pg.display.update()
 
 
 # Clase que controla los créditos del juego.
@@ -579,19 +621,19 @@ class Creditos:
         self.ancho_ventana = 1280
         self.alto_ventana = 720
         self.x_ventana = (
-            self.ventanaCreditos.winfo_screenwidth() // 2 - self.ancho_ventana // 2
+                self.ventanaCreditos.winfo_screenwidth() // 2 - self.ancho_ventana // 2
         )
         self.y_ventana = (
-            self.ventanaCreditos.winfo_screenheight() // 2 - self.alto_ventana // 2
+                self.ventanaCreditos.winfo_screenheight() // 2 - self.alto_ventana // 2
         )
         self.posicion = (
-            str(self.ancho_ventana)
-            + "x"
-            + str(self.alto_ventana)
-            + "+"
-            + str(self.x_ventana)
-            + "+"
-            + str(self.y_ventana)
+                str(self.ancho_ventana)
+                + "x"
+                + str(self.alto_ventana)
+                + "+"
+                + str(self.x_ventana)
+                + "+"
+                + str(self.y_ventana)
         )
         self.ventanaCreditos.geometry(self.posicion)
 
@@ -676,14 +718,14 @@ class Raquetas:
     """
 
     def __init__(
-        self,
-        ventana,
-        color,
-        posicionX,
-        posicionY,
-        ancho,
-        alto,
-        estado="stopped",
+            self,
+            ventana,
+            color,
+            posicionX,
+            posicionY,
+            ancho,
+            alto,
+            estado='parado',
     ):
         """
         Inicialización de las raquetas.
@@ -694,8 +736,9 @@ class Raquetas:
         self.posicionY = posicionY
         self.ancho = ancho
         self.alto = alto
-        self.estado = "stopped"
-        self.DibujarRaqueta()
+        self.estado = estado
+        self.MoverRaqueta()
+        self.EvitarQueSeSalgaDeLaPantalla()
 
     def DibujarRaqueta(self):
         """
@@ -707,13 +750,13 @@ class Raquetas:
             (self.posicionX, self.posicionY, self.ancho, self.alto),
         )
 
-    def MoverRaqueta(self, direccion):
+    def MoverRaqueta(self):
         """
         Mueve la raqueta.
         """
-        if self.estado == "up":
+        if self.estado == 'arriba':
             self.posicionY -= 10
-        elif self.estado == "down":
+        elif self.estado == 'abajo':
             self.posicionY += 10
 
     def EvitarQueSeSalgaDeLaPantalla(self):
@@ -741,12 +784,12 @@ class Pelota:
     """
 
     def __init__(
-        self,
-        ventana,
-        color,
-        posicionX,
-        posicionY,
-        radio,
+            self,
+            ventana,
+            color,
+            posicionX,
+            posicionY,
+            radio,
     ):
         """
         Inicialización de la pelota.
