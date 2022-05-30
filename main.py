@@ -26,7 +26,7 @@ naranja = "#FF8000"
 
 # Clase que controla el cierre del juego
 class Salir:
-    """La clase Salir controla el cierre del juego, muestra un diálogo de confirmación de que si el usuario está
+    """Controla el cierre del juego, muestra un diálogo de confirmación de que si el usuario está
     seguro de cerrar el juego, y si da a que si está seguro entonces destruye la ventana actual"""
 
     def FuncionSalir(self, ventanaACerrar):
@@ -55,7 +55,7 @@ class Salir:
 # Clase que cambia el color de los botones al pasar el ratón por encima
 class CambiarColor:
     """
-    Clase que cambia el color de los botones al pasar el ratón por encima.
+    Cambia el color de los botones al pasar el ratón por encima.
     """
 
     def FuncionCambiarColor(self, button, colorRatonDentro, colorRatonFuera):
@@ -345,7 +345,7 @@ class Main:
 # Clase que controla que se muestren los controles en pantalla.
 class Controles:
     """
-    Clase que controla que se muestren los controles en pantalla.
+    Muestra los controles del juego.
     """
 
     def FuncionControles(self):
@@ -490,7 +490,7 @@ class Controles:
 # Clase que controla el juego.
 class Jugar:
     """
-    Clase que controla el juego.
+    Controla el juego.
     """
 
     def __init__(self):
@@ -515,7 +515,8 @@ class Jugar:
         self.jugador2 = Raquetas(self.ventanaJuego, blanco, 1280 - 20 - 50, 720 // 2 - 60, 20, 120)
         self.puntuacionJ1 = Puntuacion(self.ventanaJuego, '0', 1280 // 4, 15)
         self.puntuacionJ2 = Puntuacion(self.ventanaJuego, '0', 1280 - 1280 // 4, 15)
-        self.colision = ColisionManager()
+        self.golManager = GolManager()
+        self.victoria = Victoria()
 
         # icono + título + pintar el fondo de negro
 
@@ -584,14 +585,17 @@ class Jugar:
             self.puntuacionJ2.DibujarPuntuacion()
 
             # Llamar a la funcion que controla los goles del jugador 1
-            if self.colision.ComprobarGol(self.pelota, self.jugador1):
+            if self.golManager.ComprobarGol(self.pelota, self.jugador1):
                 self.puntuacionJ1.SumarPuntuacion()
                 self.ReiniciarPosiciones()
 
             # Llamar a la funcion que controla los goles del jugador 2
-            if self.colision.ComprobarGol(self.pelota, self.jugador2):
+            if self.golManager.ComprobarGol(self.pelota, self.jugador2):
                 self.puntuacionJ2.SumarPuntuacion()
                 self.ReiniciarPosiciones()
+
+            # Llamar a la funcion que controla la victoria
+            self.victoria.ComprobarVictoria(self.puntuacionJ1, self.puntuacionJ2)
 
             # Limitar FPS
             pg.time.Clock().tick(60)
@@ -625,7 +629,7 @@ class Jugar:
 # Clase que controla los créditos del juego.
 class Creditos:
     """
-    Clase que controla los créditos del juego.
+    Muestra los créditos del juego.
     """
 
     def FuncionCreditos(self):
@@ -739,7 +743,7 @@ class Creditos:
 # Clase que controla las raquetas.
 class Raquetas:
     """
-    Clase que controla las raquetas.
+    Controla las raquetas.
     """
 
     def __init__(
@@ -798,14 +802,15 @@ class Raquetas:
         Reinicia la posición de la raqueta.
         """
         self.posicionY = 720 // 2 - self.alto // 2
-        self.estado = "stopped"
+        self.moverHaciaArriba = False
+        self.moverHaciaAbajo = False
         self.DibujarRaqueta()
 
 
 # Clase que controla la pelota.
 class Pelota:
     """
-    Clase que controla la pelota.
+    Controla la pelota.
     """
 
     def __init__(
@@ -893,7 +898,7 @@ class Pelota:
 # Clase que controla la puntuación del juego.
 class Puntuacion:
     """
-    Clase que controla la puntuación del juego.
+    Controla la puntuación del juego.
     """
 
     def __init__(self, screen, puntos, posicionX, posicionY):
@@ -905,8 +910,12 @@ class Puntuacion:
         self.etiquetaPuntuacion = self.fuente.render(self.mostrarPuntos, True, blanco)
 
     def DibujarPuntuacion(self):
-        self.screen.blit(self.etiquetaPuntuacion,
-                         (self.posicionX - self.etiquetaPuntuacion.get_rect().width // 2, self.posicionY))
+        self.screen.blit(
+            self.etiquetaPuntuacion, (
+                self.posicionX - self.etiquetaPuntuacion.get_rect().width // 2,
+                self.posicionY
+            )
+        )
 
     def SumarPuntuacion(self):
         puntosAString = int(self.mostrarPuntos) + 1
@@ -919,18 +928,37 @@ class Puntuacion:
 
 
 # Clase que controla los goles del juego.
-class ColisionManager:
+class GolManager:
+    """
+    Controla los goles del juego.
+    """
     def ComprobarGol(self, pelota, raqueta):
         self.pelotaX = pelota.posicionX
         self.pelotaY = pelota.posicionY
         self.raquetaX = raqueta.posicionX
         self.raquetaY = raqueta.posicionY
 
+        # Comprobamos si la pelota ha sobrepasado la raqueta.
         if self.pelotaY + pelota.radio > self.raquetaY and self.pelotaY - pelota.radio < self.raquetaY + raqueta.alto:
             if self.pelotaX - pelota.radio <= self.raquetaX + raqueta.ancho:
                 return True
 
         return False
+
+
+# Clase que controla la victoria de la partida.
+class Victoria:
+    """
+    Controla la victoria de la partida.
+    """
+    def ComprobarVictoria(self, puntuacionJ1, puntuacionJ2):
+        self.puntuacionJ1 = puntuacionJ1
+        self.puntuacionJ2 = puntuacionJ2
+
+        if self.puntuacionJ1 == 10:
+            print("Jugador 1 ha ganado")
+        elif self.puntuacionJ2 == 10:
+            print("Jugador 2 ha ganado")
 
 
 # Crear instancia de la clase principal
