@@ -584,12 +584,12 @@ class Jugar:
             self.puntuacionJ2.DibujarPuntuacion()
 
             # Llamar a la funcion que controla los goles del jugador 1
-            if self.colision.GolJ1(self.pelota, self.jugador1):
+            if self.colision.ComprobarGol(self.pelota, self.jugador1):
                 self.puntuacionJ1.SumarPuntuacion()
                 self.ReiniciarPosiciones()
 
             # Llamar a la funcion que controla los goles del jugador 2
-            if self.colision.GolJ2(self.pelota, self.jugador2):
+            if self.colision.ComprobarGol(self.pelota, self.jugador2):
                 self.puntuacionJ2.SumarPuntuacion()
                 self.ReiniciarPosiciones()
 
@@ -920,19 +920,7 @@ class Puntuacion:
 
 # Clase que controla los goles del juego.
 class ColisionManager:
-    def GolJ1(self, pelota, raqueta):
-        self.pelotaX = pelota.posicionX
-        self.pelotaY = pelota.posicionY
-        self.raquetaX = raqueta.posicionX
-        self.raquetaY = raqueta.posicionY
-
-        if self.pelotaY + pelota.radio > self.raquetaY and self.pelotaY - pelota.radio < self.raquetaY + raqueta.alto:
-            if self.pelotaX - pelota.radio <= self.raquetaX + raqueta.ancho:
-                return True
-
-        return False
-
-    def GolJ2(self, pelota, raqueta):
+    def ComprobarGol(self, pelota, raqueta):
         self.pelotaX = pelota.posicionX
         self.pelotaY = pelota.posicionY
         self.raquetaX = raqueta.posicionX
