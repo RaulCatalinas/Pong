@@ -1,8 +1,7 @@
 import os
 import sys
 from random import randint
-from tkinter import Button, Label, Tk
-from tkinter import messagebox
+from tkinter import Button, Label, Tk, messagebox
 
 import pygame as pg
 from pygame import QUIT, font
@@ -932,6 +931,7 @@ class GolManager:
     """
     Controla los goles del juego.
     """
+
     def ComprobarGol(self, pelota, raqueta):
         self.pelotaX = pelota.posicionX
         self.pelotaY = pelota.posicionY
@@ -951,6 +951,7 @@ class Victoria:
     """
     Controla la victoria de la partida.
     """
+
     def ComprobarVictoria(self, puntuacionJ1, puntuacionJ2):
         self.puntuacionJ1 = puntuacionJ1
         self.puntuacionJ2 = puntuacionJ2
