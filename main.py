@@ -5,7 +5,7 @@ from tkinter import Button, Label, Tk
 from tkinter import messagebox
 
 import pygame as pg
-from pygame import QUIT
+from pygame import QUIT, font
 
 # Colores en hexadecimal
 azulOscuro = "#000033"
@@ -511,9 +511,12 @@ class Jugar:
         # Instancias de las clases
         self.salir = Salir()
         self.pelota = Pelota(self.ventanaJuego, blanco, 1280 // 2, 720 // 2, 15)
-        self.jugador1 = Raquetas(self.ventanaJuego, blanco, 15, 720 // 2 - 60, 20, 120)
-        self.jugador2 = Raquetas(self.ventanaJuego, blanco, 1280 - 20 - 15, 720 // 2 - 60, 20, 120)
+        self.jugador1 = Raquetas(self.ventanaJuego, blanco, 50, 720 // 2 - 60, 20, 120)
+        self.jugador2 = Raquetas(self.ventanaJuego, blanco, 1280 - 20 - 50, 720 // 2 - 60, 20, 120)
         self.pausa = Pausa()
+        self.puntuacionJ1 = Puntuacion(self.ventanaJuego, '0', 1280 // 4, 15)
+        self.puntuacionJ2 = Puntuacion(self.ventanaJuego, '0', 1280 - 1280 // 4, 15)
+        self.colision = ColisionManager()
 
         # icono + título + pintar el fondo de negro
 
@@ -565,18 +568,33 @@ class Jugar:
             self.jugador1.DibujarRaqueta()
             self.jugador2.DibujarRaqueta()
 
-            # Llamar a la funcion que mueve la pelota + la funcion que mueve las raquetas
+            # Llamar a las funciones que mueven los sprites
             self.pelota.MoverPelota()
             self.jugador1.MoverRaqueta(10)
             self.jugador2.MoverRaqueta(10)
 
-            # Llamar a la funcion que comprueba si la pelota ha chocado con alguna raqueta
-
-            # self.pelota.ComprobarChoque()
-
             # Llamar a la funcion que evita que la raqueta se salga de la pantalla
             self.jugador1.EvitarQueSeSalgaDeLaPantalla()
             self.jugador2.EvitarQueSeSalgaDeLaPantalla()
+
+            # Llamar a las funciones que hacen que la pelota rebote
+            self.pelota.ReboteEnLasParedes()
+            self.pelota.ReboteEnLasRaquetas(self.jugador1)
+            self.pelota.ReboteEnLasRaquetas(self.jugador2)
+
+            # Llamar a las funciones que muestran la puntuación
+            self.puntuacionJ1.DibujarPuntuacion()
+            self.puntuacionJ2.DibujarPuntuacion()
+
+            # Llamar a la funcion que controla los goles del jugador 1
+            if self.colision.GolJ1(self.pelota, self.jugador1):
+                self.puntuacionJ1.SumarPuntuacion()
+                self.ReiniciarPosiciones()
+
+            # Llamar a la funcion que controla los goles del jugador 2
+            if self.colision.GolJ2(self.pelota, self.jugador2):
+                self.puntuacionJ2.SumarPuntuacion()
+                self.ReiniciarPosiciones()
 
             # Limitar FPS
             pg.time.Clock().tick(60)
@@ -598,6 +616,13 @@ class Jugar:
             # Ancho de la línea
             5,
         )
+
+    def ReiniciarPosiciones(self):
+        self.DibujarMedioCampo()
+        self.pelota.ReiniciarPosicion()
+        self.jugador1.ReiniciarPosicion()
+        self.jugador2.ReiniciarPosicion()
+        self.pelota.MoverPelota()
 
 
 # Clase que controla los créditos del juego.
@@ -831,6 +856,42 @@ class Pelota:
         self.posicionX += self.velocidadX
         self.posicionY += self.velocidadY
 
+        if self.velocidadX == 0:
+            self.velocidadX = randint(-5, 5)
+            print(f"velocidadX: {self.velocidadX}, velocidadY: {self.velocidadY}")
+
+    def ReboteEnLasParedes(self):
+        """
+        Rebota la pelota.
+        """
+        if self.posicionX <= 0:
+            self.velocidadX = abs(self.velocidadX)
+        elif self.posicionX >= 1280 - self.radio:
+            self.velocidadX = -abs(self.velocidadX)
+
+        if self.posicionY <= 0:
+            self.velocidadY = abs(self.velocidadY)
+        elif self.posicionY >= 720 - self.radio:
+            self.velocidadY = -abs(self.velocidadY)
+
+    def ReboteEnLasRaquetas(self, raqueta):
+        """
+        Rebota la pelota con la raqueta.
+        """
+        if raqueta.posicionX + raqueta.ancho >= self.posicionX >= raqueta.posicionX:
+            if raqueta.posicionY + raqueta.alto >= self.posicionY >= raqueta.posicionY:
+                self.velocidadX = -self.velocidadX
+                self.velocidadY = -self.velocidadY
+
+    def ReiniciarPosicion(self):
+        """
+        Reinicia la posición de la pelota.
+        """
+        self.posicionX = 1280 // 2
+        self.posicionY = 720 // 2
+        self.velocidadX = 0
+        self.velocidadY = 0
+
 
 # Clase que controla la puntuación del juego.
 class Puntuacion:
@@ -838,26 +899,26 @@ class Puntuacion:
     Clase que controla la puntuación del juego.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, screen, puntos, posicionX, posicionY):
+        self.screen = screen
+        self.mostrarPuntos = puntos
+        self.posicionX = posicionX
+        self.posicionY = posicionY
+        self.fuente = font.SysFont("Helvetica", 80, bold=True)
+        self.etiquetaPuntuacion = self.fuente.render(self.mostrarPuntos, True, blanco)
 
-    def FuncionPuntuacion(self):
-        pass
+    def DibujarPuntuacion(self):
+        self.screen.blit(self.etiquetaPuntuacion,
+                         (self.posicionX - self.etiquetaPuntuacion.get_rect().width // 2, self.posicionY))
 
-    # Crear instancia de la clase principal
+    def SumarPuntuacion(self):
+        puntosAString = int(self.mostrarPuntos) + 1
+        self.mostrarPuntos = str(puntosAString)
+        self.etiquetaPuntuacion = self.fuente.render(self.mostrarPuntos, True, blanco)
 
-
-# Clase que controla las colisiones del juego.
-class Colisiones:
-    """
-    Clase que controla las colisiones del juego.
-    """
-
-    def __init__(self):
-        pass
-
-    def FuncionColisiones(self):
-        pass
+    def ReiniciarPuntuacion(self):
+        self.mostrarPuntos = '0'
+        self.etiquetaPuntuacion = self.font.render(self.mostrarPuntos, True, blanco)
 
 
 # Clase que controla la pausa del juego.
@@ -881,6 +942,33 @@ class Pausa:
                     if event.key == pg.K_p or event.key == pg.K_ESCAPE:
                         self.pausado = True
                         self.FuncionPausa()
+
+
+# Clase que controla los goles del juego.
+class ColisionManager:
+    def GolJ1(self, pelota, raqueta):
+        self.pelotaX = pelota.posicionX
+        self.pelotaY = pelota.posicionY
+        self.raquetaX = raqueta.posicionX
+        self.raquetaY = raqueta.posicionY
+
+        if self.pelotaY + pelota.radio > self.raquetaY and self.pelotaY - pelota.radio < self.raquetaY + raqueta.alto:
+            if self.pelotaX - pelota.radio <= self.raquetaX + raqueta.ancho:
+                return True
+
+        return False
+
+    def GolJ2(self, pelota, raqueta):
+        self.pelotaX = pelota.posicionX
+        self.pelotaY = pelota.posicionY
+        self.raquetaX = raqueta.posicionX
+        self.raquetaY = raqueta.posicionY
+
+        if self.pelotaY + pelota.radio > self.raquetaY and self.pelotaY - pelota.radio < self.raquetaY + raqueta.alto:
+            if self.pelotaX - pelota.radio <= self.raquetaX + raqueta.ancho:
+                return True
+
+        return False
 
 
 # Crear instancia de la clase principal
