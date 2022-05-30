@@ -513,6 +513,7 @@ class Jugar:
         self.pelota = Pelota(self.ventanaJuego, blanco, 1280 // 2, 720 // 2, 15)
         self.jugador1 = Raquetas(self.ventanaJuego, blanco, 15, 720 // 2 - 60, 20, 120)
         self.jugador2 = Raquetas(self.ventanaJuego, blanco, 1280 - 20 - 15, 720 // 2 - 60, 20, 120)
+        self.pausa = Pausa()
 
         # icono + título + pintar el fondo de negro
 
@@ -520,7 +521,7 @@ class Jugar:
         pg.display.set_caption("Pong")
         self.ventanaJuego.fill(negro)
 
-        Jugar.DibujarMedioCampo(self)
+        self.DibujarMedioCampo()
 
         # Centrar ventana
         os.environ["SDL_VIDEO_CENTRED"] = "1"
@@ -534,28 +535,30 @@ class Jugar:
                 # Comprobar si se ha pulsado una tecla
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_w:
-                        self.jugador1.estado = "arriba"
+                        self.jugador1.moverHaciaArriba = True
                     if event.key == pg.K_s:
-                        self.jugador1.estado = 'abajo'
+                        self.jugador1.moverHaciaAbajo = True
                     if event.key == pg.K_UP:
-                        self.jugador2.estado = 'arriba'
+                        self.jugador2.moverHaciaArriba = True
                     if event.key == pg.K_DOWN:
-                        self.jugador2.estado = 'abajo'
+                        self.jugador2.moverHaciaAbajo = True
+                    if event.key == pg.K_ESCAPE:
+                        self.pausa.PausarJuego()
                 # Comprobar si se ha soltado una tecla
                 if event.type == pg.KEYUP:
                     if event.key == pg.K_w:
-                        self.jugador1.estado = 'parado'
+                        self.jugador1.moverHaciaArriba = False
                     if event.key == pg.K_s:
-                        self.jugador1.estado = 'parado'
+                        self.jugador1.moverHaciaAbajo = False
                     if event.key == pg.K_UP:
-                        self.jugador2.estado = 'parado'
+                        self.jugador2.moverHaciaArriba = False
                     if event.key == pg.K_DOWN:
-                        self.jugador2.estado = 'parado'
+                        self.jugador2.moverHaciaAbajo = False
             # Borrar rastro de la pelota
             self.ventanaJuego.fill(negro)
 
             # Dibujar Medio Campo
-            Jugar.DibujarMedioCampo(self)
+            self.DibujarMedioCampo()
 
             # Llamar a las funciones que dibujan los sprites
             self.pelota.DibujarPelota()
@@ -725,7 +728,8 @@ class Raquetas:
             posicionY,
             ancho,
             alto,
-            estado='parado',
+            moverHaciaArriba=False,
+            moverHaciaAbajo=False,
     ):
         """
         Inicialización de las raquetas.
@@ -736,7 +740,8 @@ class Raquetas:
         self.posicionY = posicionY
         self.ancho = ancho
         self.alto = alto
-        self.estado = estado
+        self.moverHaciaArriba = moverHaciaArriba
+        self.moverHaciaAbajo = moverHaciaAbajo
         self.MoverRaqueta()
         self.EvitarQueSeSalgaDeLaPantalla()
 
@@ -754,9 +759,9 @@ class Raquetas:
         """
         Mueve la raqueta.
         """
-        if self.estado == 'arriba':
+        if self.moverHaciaArriba:
             self.posicionY -= 10
-        elif self.estado == 'abajo':
+        elif self.moverHaciaAbajo:
             self.posicionY += 10
 
     def EvitarQueSeSalgaDeLaPantalla(self):
@@ -855,6 +860,15 @@ class Colisiones:
 
     def FuncionColisiones(self):
         pass
+
+
+class Pausa:
+    """
+    Clase que controla la pausa del juego.
+    """
+
+    def PausarJuego(self):
+        print("Se ha pulsado la tecla de pausa")
 
 
 menu = Main()
