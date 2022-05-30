@@ -39,7 +39,7 @@ class Salir:
         if self.cerrar == "yes":
             self.Tk.destroy()
 
-    def FuncionSalirPygame(self, ventanaACerrar):
+    def FuncionSalirPygame(self, ventanaACerrar, variableQueControlaElJuego):
         self.Tk = ventanaACerrar
 
         self.cerrar = messagebox.askquestion(
@@ -47,7 +47,7 @@ class Salir:
         )
 
         if self.cerrar == "yes":
-            jugando = False
+            variableQueControlaElJuego = False
             pg.quit()
             sys.exit()
 
@@ -531,7 +531,7 @@ class Jugar:
             for event in pg.event.get():
                 # Comprobar si se ha pulsado el botón de salir
                 if event.type == QUIT:
-                    self.salir.FuncionSalirPygame(self.ventanaJuego)
+                    self.salir.FuncionSalirPygame(self.ventanaJuego, self.jugar)
                 # Comprobar si se ha pulsado una tecla
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_w:
@@ -543,7 +543,7 @@ class Jugar:
                     if event.key == pg.K_DOWN:
                         self.jugador2.moverHaciaAbajo = True
                     if event.key == pg.K_ESCAPE:
-                        self.pausa.PausarJuego()
+                        self.pausa.PausarJuego(self.jugar)
                 # Comprobar si se ha soltado una tecla
                 if event.type == pg.KEYUP:
                     if event.key == pg.K_w:
@@ -567,8 +567,8 @@ class Jugar:
 
             # Llamar a la funcion que mueve la pelota + la funcion que mueve las raquetas
             self.pelota.MoverPelota()
-            self.jugador1.MoverRaqueta()
-            self.jugador2.MoverRaqueta()
+            self.jugador1.MoverRaqueta(10)
+            self.jugador2.MoverRaqueta(10)
 
             # Llamar a la funcion que comprueba si la pelota ha chocado con alguna raqueta
 
@@ -742,8 +742,6 @@ class Raquetas:
         self.alto = alto
         self.moverHaciaArriba = moverHaciaArriba
         self.moverHaciaAbajo = moverHaciaAbajo
-        self.MoverRaqueta()
-        self.EvitarQueSeSalgaDeLaPantalla()
 
     def DibujarRaqueta(self):
         """
@@ -755,14 +753,14 @@ class Raquetas:
             (self.posicionX, self.posicionY, self.ancho, self.alto),
         )
 
-    def MoverRaqueta(self):
+    def MoverRaqueta(self, velocidad):
         """
         Mueve la raqueta.
         """
         if self.moverHaciaArriba:
-            self.posicionY -= 10
+            self.posicionY -= velocidad
         elif self.moverHaciaAbajo:
-            self.posicionY += 10
+            self.posicionY += velocidad
 
     def EvitarQueSeSalgaDeLaPantalla(self):
         """
@@ -862,15 +860,30 @@ class Colisiones:
         pass
 
 
+# Clase que controla la pausa del juego.
 class Pausa:
     """
     Clase que controla la pausa del juego.
     """
 
-    def PausarJuego(self):
-        print("Se ha pulsado la tecla de pausa")
+    def __init__(self):
+        self.pausado = False
+
+    def PausarJuego(self, variableQueControlaElJuego):
+        while self.paudado:
+            for event in pg.event.get():
+                if event.type == QUIT:
+                    self.pausado = False
+                    variableQueControlaElJuego = False
+                    pg.quit()
+                    sys.exit()
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_p or event.key == pg.K_ESCAPE:
+                        self.pausado = True
+                        self.FuncionPausa()
 
 
+# Crear instancia de la clase principal
 menu = Main()
 
 # Llamar a la función principal
