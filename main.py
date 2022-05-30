@@ -513,7 +513,6 @@ class Jugar:
         self.pelota = Pelota(self.ventanaJuego, blanco, 1280 // 2, 720 // 2, 15)
         self.jugador1 = Raquetas(self.ventanaJuego, blanco, 50, 720 // 2 - 60, 20, 120)
         self.jugador2 = Raquetas(self.ventanaJuego, blanco, 1280 - 20 - 50, 720 // 2 - 60, 20, 120)
-        self.pausa = Pausa()
         self.puntuacionJ1 = Puntuacion(self.ventanaJuego, '0', 1280 // 4, 15)
         self.puntuacionJ2 = Puntuacion(self.ventanaJuego, '0', 1280 - 1280 // 4, 15)
         self.colision = ColisionManager()
@@ -545,8 +544,6 @@ class Jugar:
                         self.jugador2.moverHaciaArriba = True
                     if event.key == pg.K_DOWN:
                         self.jugador2.moverHaciaAbajo = True
-                    if event.key == pg.K_ESCAPE:
-                        self.pausa.PausarJuego(self.jugar)
                 # Comprobar si se ha soltado una tecla
                 if event.type == pg.KEYUP:
                     if event.key == pg.K_w:
@@ -919,29 +916,6 @@ class Puntuacion:
     def ReiniciarPuntuacion(self):
         self.mostrarPuntos = '0'
         self.etiquetaPuntuacion = self.font.render(self.mostrarPuntos, True, blanco)
-
-
-# Clase que controla la pausa del juego.
-class Pausa:
-    """
-    Clase que controla la pausa del juego.
-    """
-
-    def __init__(self):
-        self.pausado = False
-
-    def PausarJuego(self, variableQueControlaElJuego):
-        while self.paudado:
-            for event in pg.event.get():
-                if event.type == QUIT:
-                    self.pausado = False
-                    variableQueControlaElJuego = False
-                    pg.quit()
-                    sys.exit()
-                if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_p or event.key == pg.K_ESCAPE:
-                        self.pausado = True
-                        self.FuncionPausa()
 
 
 # Clase que controla los goles del juego.
