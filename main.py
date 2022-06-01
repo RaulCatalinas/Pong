@@ -585,12 +585,12 @@ class Jugar:
 
             # Llamar a la funcion que controla los goles del jugador 1
             if self.golManager.ComprobarGol(self.pelota, self.jugador1):
-                self.puntuacionJ1.SumarPuntuacion()
+                self.puntuacionJ2.SumarPuntuacion()
                 self.ReiniciarPosiciones()
 
             # Llamar a la funcion que controla los goles del jugador 2
             if self.golManager.ComprobarGol(self.pelota, self.jugador2):
-                self.puntuacionJ2.SumarPuntuacion()
+                self.puntuacionJ1.SumarPuntuacion()
                 self.ReiniciarPosiciones()
 
             # Llamar a la funcion que controla la victoria
@@ -622,7 +622,7 @@ class Jugar:
         self.pelota.ReiniciarPosicion()
         self.jugador1.ReiniciarPosicion()
         self.jugador2.ReiniciarPosicion()
-        self.pelota.MoverPelota()
+        self.pelota.IniciarMovimiento()
 
 
 # Clase que controla los créditos del juego.
@@ -850,16 +850,20 @@ class Pelota:
 
         print(f"velocidadX: {self.velocidadX}, velocidadY: {self.velocidadY}")
 
+        if (
+                self.velocidadX == 0
+                or self.velocidadX == -1
+                or self.velocidadX == -2
+        ):
+            self.velocidadX = randint(-5, 5)
+            print(f"velocidadX: {self.velocidadX}, velocidadY: {self.velocidadY}")
+
     def MoverPelota(self):
         """
         Mueve la pelota.
         """
         self.posicionX += self.velocidadX
         self.posicionY += self.velocidadY
-
-        if self.velocidadX == 0:
-            self.velocidadX = randint(-5, 5)
-            print(f"velocidadX: {self.velocidadX}, velocidadY: {self.velocidadY}")
 
     def ReboteEnLasParedes(self):
         """
@@ -879,10 +883,12 @@ class Pelota:
         """
         Rebota la pelota con la raqueta.
         """
-        if raqueta.posicionX + raqueta.ancho >= self.posicionX >= raqueta.posicionX:
-            if raqueta.posicionY + raqueta.alto >= self.posicionY >= raqueta.posicionY:
-                self.velocidadX = -self.velocidadX
-                self.velocidadY = -self.velocidadY
+        if (
+                raqueta.posicionX + raqueta.ancho >= self.posicionX >= raqueta.posicionX
+                and raqueta.posicionY + raqueta.alto >= self.posicionY >= raqueta.posicionY
+        ):
+            self.velocidadX = -self.velocidadX
+            self.velocidadY = -self.velocidadY
 
     def ReiniciarPosicion(self):
         """
@@ -939,11 +945,14 @@ class GolManager:
         self.raquetaY = raqueta.posicionY
 
         # Comprobamos si la pelota ha sobrepasado la raqueta.
-        if self.pelotaY + pelota.radio > self.raquetaY and self.pelotaY - pelota.radio < self.raquetaY + raqueta.alto:
-            if self.pelotaX - pelota.radio <= self.raquetaX + raqueta.ancho:
-                return True
+        if (
+                self.pelotaX + pelota.radio >= self.raquetaX >= self.pelotaX - pelota.radio
+                and self.pelotaY + pelota.radio >= self.raquetaY >= self.pelotaY - pelota.radio
+        ):
+            return True
 
-        return False
+        else:
+            return False
 
 
 # Clase que controla la victoria de la partida.
