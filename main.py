@@ -575,6 +575,7 @@ class Jugar:
         pg.display.set_caption("Pong")
         self.ventanaJuego.fill(negro)
 
+        # Dibujar el medio campo
         self.DibujarMedioCampo()
 
         # Centrar ventana
