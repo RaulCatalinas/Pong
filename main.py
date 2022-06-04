@@ -1,7 +1,10 @@
 import os
 import sys
 from random import randint
-from tkinter import Button, Label, Tk, messagebox
+from tkinter import Button
+from tkinter import Label
+from tkinter import Tk
+from tkinter import messagebox
 
 import pygame as pg
 from pygame import QUIT, font
@@ -28,6 +31,11 @@ class Salir:
     """Controla el cierre del juego, muestra un diálogo de confirmación de que si el usuario está
     seguro de cerrar el juego, y si da a que si está seguro entonces destruye la ventana actual"""
 
+    def __init__(self):
+        self.seguirJugando = None
+        self.cerrar = None
+        self.Tk = None
+
     def FuncionSalir(self, ventanaACerrar):
         self.Tk = ventanaACerrar
 
@@ -40,13 +48,14 @@ class Salir:
 
     def FuncionSalirPygame(self, ventanaACerrar, variableQueControlaElJuego):
         self.Tk = ventanaACerrar
+        self.seguirJugando = variableQueControlaElJuego
 
         self.cerrar = messagebox.askquestion(
             "Salir del juego", "¿Seguro que quieres salir del juego?"
         )
 
         if self.cerrar == "yes":
-            variableQueControlaElJuego = False
+            self.seguirJugando = False
             pg.quit()
             sys.exit()
 
@@ -57,7 +66,8 @@ class CambiarColor:
     Cambia el color de los botones al pasar el ratón por encima.
     """
 
-    def FuncionCambiarColor(self, button, colorRatonDentro, colorRatonFuera):
+    @staticmethod
+    def FuncionCambiarColor(button, colorRatonDentro, colorRatonFuera):
         button.bind(
             "<Enter>",
             func=lambda e: button.config(background=colorRatonDentro, cursor="hand2"),
@@ -87,7 +97,8 @@ class Botones:
                 colorRatonFuera,
         ):
             """
-            Crea un botón con los parámetros dados y luego llama a la función "CambiarColor" para cambiar el color del botón
+            Crea un botón con los parámetros dados y luego llama a la función “CambiarColor” para cambiar el color del 4
+            botón
             cuando el mouse está sobre él.
             @param texto - El texto que se mostrará en el botón.
             @param y - La distancia entre el botón y el widget anterior.
@@ -145,7 +156,8 @@ class Botones:
                 colorRatonFuera,
         ):
             """
-            Crea un botón con los parámetros dados y luego llama a la función "CambiarColor" para cambiar el color del botón
+            Crea un botón con los parámetros dados y luego llama a la función “CambiarColor” para cambiar el color del
+            botón
             cuando el mouse está sobre él.
             @param texto - El texto que se mostrará en el botón.
             @param x - La distancia entre el botón y el widget anterior.
@@ -233,6 +245,17 @@ class Main:
         Crear instancias de las clases que se utilizarán en el programa.
         """
         # Instancias de las clases
+        self.ventana = None
+        self.ancho_ventana = None
+        self.alto_ventana = None
+        self.x_ventana = None
+        self.y_ventana = None
+        self.posicion = None
+        self.etiquetaTitulo = None
+        self.botonJugar = None
+        self.botonControles = None
+        self.botonCreditos = None
+        self.botonSalir = None
         self.jugar = Jugar()
         self.salir = Salir()
         self.cambiarColor = CambiarColor()
@@ -346,6 +369,26 @@ class Controles:
     """
     Muestra los controles del juego.
     """
+
+    def __init__(self):
+        self.salir = None
+        self.main = None
+        self.boton = None
+        self.creditos = None
+        self.ventanaControles = None
+        self.ancho_ventana = None
+        self.alto_ventana = None
+        self.x_ventana = None
+        self.y_ventana = None
+        self.posicion = None
+        self.etiquetaControles = None
+        self.etiquetaJ1 = None
+        self.etiquetaControlesJ1 = None
+        self.etiquetaJ2 = None
+        self.etiquetaControlesJ2 = None
+        self.botonVolverAlMenu = None
+        self.botonCreditos = None
+        self.botonSalir = None
 
     def FuncionControles(self):
         # Instancias de las clases
@@ -499,6 +542,15 @@ class Jugar:
         Generación de la variable que controla el bucle principal del juego.
         Crear instancias de las clases.
         """
+        self.ventanaJuego = None
+        self.salir = None
+        self.pelota = None
+        self.jugador1 = None
+        self.jugador2 = None
+        self.puntuacionJ1 = None
+        self.puntuacionJ2 = None
+        self.golManager = None
+        self.victoria = None
         pg.init()
         self.icono = pg.image.load("./Images/icono.ico")
         self.jugar = True
@@ -631,6 +683,23 @@ class Creditos:
     Muestra los créditos del juego.
     """
 
+    def __init__(self):
+        self.salir = None
+        self.main = None
+        self.boton = None
+        self.controles = None
+        self.ventanaCreditos = None
+        self.ancho_ventana = None
+        self.alto_ventana = None
+        self.x_ventana = None
+        self.y_ventana = None
+        self.posicion = None
+        self.etiquetaCreditos = None
+        self.etiquetaAutor = None
+        self.botonVolverAlMenu = None
+        self.botonControles = None
+        self.botonSalir = None
+
     def FuncionCreditos(self):
         # Instancias de las clases
         self.salir = Salir()
@@ -759,6 +828,7 @@ class Raquetas:
         """
         Inicialización de las raquetas.
         """
+        self.raqueta = None
         self.ventana = ventana
         self.color = color
         self.posicionX = posicionX
@@ -823,6 +893,9 @@ class Pelota:
         """
         Inicialización de la pelota.
         """
+        self.pelota = None
+        self.velocidadX = None
+        self.velocidadY = None
         self.ventana = ventana
         self.color = color
         self.posicionX = posicionX
@@ -907,6 +980,7 @@ class Puntuacion:
     """
 
     def __init__(self, screen, puntos, posicionX, posicionY):
+        self.font = None
         self.screen = screen
         self.mostrarPuntos = puntos
         self.posicionX = posicionX
@@ -938,6 +1012,12 @@ class GolManager:
     Controla los goles del juego.
     """
 
+    def __init__(self):
+        self.pelotaX = None
+        self.pelotaY = None
+        self.raquetaX = None
+        self.raquetaY = None
+
     def ComprobarGol(self, pelota, raqueta):
         self.pelotaX = pelota.posicionX
         self.pelotaY = pelota.posicionY
@@ -960,6 +1040,10 @@ class Victoria:
     """
     Controla la victoria de la partida.
     """
+
+    def __init__(self):
+        self.puntuacionJ1 = None
+        self.puntuacionJ2 = None
 
     def ComprobarVictoria(self, puntuacionJ1, puntuacionJ2):
         self.puntuacionJ1 = puntuacionJ1
