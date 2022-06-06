@@ -1,10 +1,7 @@
 import os
 import sys
 from random import randint
-from tkinter import Button
-from tkinter import Label
-from tkinter import Tk
-from tkinter import messagebox
+from tkinter import Button, Tk, Label, messagebox
 
 import pygame as pg
 from pygame import QUIT, font
@@ -84,17 +81,17 @@ class Botones:
 
     class BotonPosicionAbsoluta:
         def __init__(
-                self,
-                texto,
-                y,
-                ancho,
-                colorFondo,
-                funcion,
-                fuente,
-                tamañoFuente,
-                ventana,
-                colorRatonDentro,
-                colorRatonFuera,
+            self,
+            texto,
+            y,
+            ancho,
+            colorFondo,
+            funcion,
+            fuente,
+            tamañoFuente,
+            ventana,
+            colorRatonDentro,
+            colorRatonFuera,
         ):
             """
             Crea un botón con los parámetros dados y luego llama a la función “CambiarColor” para cambiar el color del 4
@@ -142,18 +139,18 @@ class Botones:
 
     class BotonPosicionRelativa:
         def __init__(
-                self,
-                texto,
-                x,
-                y,
-                ancho,
-                colorFondo,
-                funcion,
-                fuente,
-                tamañoFuente,
-                ventana,
-                colorRatonDentro,
-                colorRatonFuera,
+            self,
+            texto,
+            x,
+            y,
+            ancho,
+            colorFondo,
+            funcion,
+            fuente,
+            tamañoFuente,
+            ventana,
+            colorRatonDentro,
+            colorRatonFuera,
         ):
             """
             Crea un botón con los parámetros dados y luego llama a la función “CambiarColor” para cambiar el color del
@@ -277,13 +274,13 @@ class Main:
         self.x_ventana = self.ventana.winfo_screenwidth() // 2 - self.ancho_ventana // 2
         self.y_ventana = self.ventana.winfo_screenheight() // 2 - self.alto_ventana // 2
         self.posicion = (
-                str(self.ancho_ventana)
-                + "x"
-                + str(self.alto_ventana)
-                + "+"
-                + str(self.x_ventana)
-                + "+"
-                + str(self.y_ventana)
+            str(self.ancho_ventana)
+            + "x"
+            + str(self.alto_ventana)
+            + "+"
+            + str(self.x_ventana)
+            + "+"
+            + str(self.y_ventana)
         )
         self.ventana.geometry(self.posicion)
 
@@ -408,19 +405,19 @@ class Controles:
         self.ancho_ventana = 1280
         self.alto_ventana = 720
         self.x_ventana = (
-                self.ventanaControles.winfo_screenwidth() // 2 - self.ancho_ventana // 2
+            self.ventanaControles.winfo_screenwidth() // 2 - self.ancho_ventana // 2
         )
         self.y_ventana = (
-                self.ventanaControles.winfo_screenheight() // 2 - self.alto_ventana // 2
+            self.ventanaControles.winfo_screenheight() // 2 - self.alto_ventana // 2
         )
         self.posicion = (
-                str(self.ancho_ventana)
-                + "x"
-                + str(self.alto_ventana)
-                + "+"
-                + str(self.x_ventana)
-                + "+"
-                + str(self.y_ventana)
+            str(self.ancho_ventana)
+            + "x"
+            + str(self.alto_ventana)
+            + "+"
+            + str(self.x_ventana)
+            + "+"
+            + str(self.y_ventana)
         )
         self.ventanaControles.geometry(self.posicion)
 
@@ -563,9 +560,11 @@ class Jugar:
         self.salir = Salir()
         self.pelota = Pelota(self.ventanaJuego, blanco, 1280 // 2, 720 // 2, 15)
         self.jugador1 = Raquetas(self.ventanaJuego, blanco, 50, 720 // 2 - 60, 20, 120)
-        self.jugador2 = Raquetas(self.ventanaJuego, blanco, 1280 - 20 - 50, 720 // 2 - 60, 20, 120)
-        self.puntuacionJ1 = Puntuacion(self.ventanaJuego, '0', 1280 // 4, 15)
-        self.puntuacionJ2 = Puntuacion(self.ventanaJuego, '0', 1280 - 1280 // 4, 15)
+        self.jugador2 = Raquetas(
+            self.ventanaJuego, blanco, 1280 - 20 - 50, 720 // 2 - 60, 20, 120
+        )
+        self.puntuacionJ1 = Puntuacion(self.ventanaJuego, "0", 1280 // 4, 15)
+        self.puntuacionJ2 = Puntuacion(self.ventanaJuego, "0", 1280 - 1280 // 4, 15)
         self.golManager = GolManager()
         self.victoria = Victoria()
 
@@ -719,19 +718,19 @@ class Creditos:
         self.ancho_ventana = 1280
         self.alto_ventana = 720
         self.x_ventana = (
-                self.ventanaCreditos.winfo_screenwidth() // 2 - self.ancho_ventana // 2
+            self.ventanaCreditos.winfo_screenwidth() // 2 - self.ancho_ventana // 2
         )
         self.y_ventana = (
-                self.ventanaCreditos.winfo_screenheight() // 2 - self.alto_ventana // 2
+            self.ventanaCreditos.winfo_screenheight() // 2 - self.alto_ventana // 2
         )
         self.posicion = (
-                str(self.ancho_ventana)
-                + "x"
-                + str(self.alto_ventana)
-                + "+"
-                + str(self.x_ventana)
-                + "+"
-                + str(self.y_ventana)
+            str(self.ancho_ventana)
+            + "x"
+            + str(self.alto_ventana)
+            + "+"
+            + str(self.x_ventana)
+            + "+"
+            + str(self.y_ventana)
         )
         self.ventanaCreditos.geometry(self.posicion)
 
@@ -816,15 +815,15 @@ class Raquetas:
     """
 
     def __init__(
-            self,
-            ventana,
-            color,
-            posicionX,
-            posicionY,
-            ancho,
-            alto,
-            moverHaciaArriba=False,
-            moverHaciaAbajo=False,
+        self,
+        ventana,
+        color,
+        posicionX,
+        posicionY,
+        ancho,
+        alto,
+        moverHaciaArriba=False,
+        moverHaciaAbajo=False,
     ):
         """
         Inicialización de las raquetas.
@@ -884,12 +883,12 @@ class Pelota:
     """
 
     def __init__(
-            self,
-            ventana,
-            color,
-            posicionX,
-            posicionY,
-            radio,
+        self,
+        ventana,
+        color,
+        posicionX,
+        posicionY,
+        radio,
     ):
         """
         Inicialización de la pelota.
@@ -924,11 +923,7 @@ class Pelota:
 
         print(f"velocidadX: {self.velocidadX}, velocidadY: {self.velocidadY}")
 
-        if (
-                self.velocidadX == 0
-                or self.velocidadX == -1
-                or self.velocidadX == -2
-        ):
+        if self.velocidadX == 0 or self.velocidadX == -1 or self.velocidadX == -2:
             self.velocidadX = randint(-5, 5)
             print(f"velocidadX: {self.velocidadX}, velocidadY: {self.velocidadY}")
 
@@ -958,8 +953,8 @@ class Pelota:
         Rebota la pelota con la raqueta.
         """
         if (
-                raqueta.posicionX + raqueta.ancho >= self.posicionX >= raqueta.posicionX
-                and raqueta.posicionY + raqueta.alto >= self.posicionY >= raqueta.posicionY
+            raqueta.posicionX + raqueta.ancho >= self.posicionX >= raqueta.posicionX
+            and raqueta.posicionY + raqueta.alto >= self.posicionY >= raqueta.posicionY
         ):
             self.velocidadX = -self.velocidadX
             self.velocidadY = -self.velocidadY
@@ -991,10 +986,11 @@ class Puntuacion:
 
     def DibujarPuntuacion(self):
         self.screen.blit(
-            self.etiquetaPuntuacion, (
+            self.etiquetaPuntuacion,
+            (
                 self.posicionX - self.etiquetaPuntuacion.get_rect().width // 2,
-                self.posicionY
-            )
+                self.posicionY,
+            ),
         )
 
     def SumarPuntuacion(self):
@@ -1003,7 +999,7 @@ class Puntuacion:
         self.etiquetaPuntuacion = self.fuente.render(self.mostrarPuntos, True, blanco)
 
     def ReiniciarPuntuacion(self):
-        self.mostrarPuntos = '0'
+        self.mostrarPuntos = "0"
         self.etiquetaPuntuacion = self.font.render(self.mostrarPuntos, True, blanco)
 
 
@@ -1027,8 +1023,10 @@ class GolManager:
 
         # Comprobamos si la pelota ha sobrepasado la raqueta.
         if (
-                self.pelotaX + pelota.radio >= self.raquetaX >= self.pelotaX - pelota.radio
-                and self.pelotaY + pelota.radio >= self.raquetaY >= self.pelotaY - pelota.radio
+            self.pelotaX + pelota.radio >= self.raquetaX >= self.pelotaX - pelota.radio
+            and self.pelotaY + pelota.radio
+            >= self.raquetaY
+            >= self.pelotaY - pelota.radio
         ):
             return True
 
@@ -1051,6 +1049,7 @@ class Victoria:
         self.puntuacionJ2 = puntuacionJ2
 
         if self.puntuacionJ1 == 10:
+
             print("Jugador 1 ha ganado")
         elif self.puntuacionJ2 == 10:
             print("Jugador 2 ha ganado")
